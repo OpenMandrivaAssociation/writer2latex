@@ -55,7 +55,7 @@ Javadoc for %{name}.
 
 %package -n openoffice.org-%{name}
 Summary:          OpenOffice.org Writer2LateX Extension
-Group:            Applications/Productivity
+Group:            Office
 Requires:         openoffice.org-common
 Requires(pre):    openoffice.org-common
 Requires(post):   openoffice.org-common
