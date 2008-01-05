@@ -22,7 +22,7 @@ Patch0:        writer2latex05.rh.patch
 BuildRequires: java-rpmbuild
 BuildRequires: openoffice.org-java-common
 BuildRequires: ant
-Group:         Text Processing/Markup/XML
+Group:         Office
 %if ! %{gcj_support}
 Buildarch:     noarch
 %endif
