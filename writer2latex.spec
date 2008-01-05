@@ -20,7 +20,7 @@ Url:           http://www.hj-gym.dk/~hj/writer2latex/
 Source0:       http://www.hj-gym.dk/~hj/writer2latex/writer2latex05.zip
 Patch0:        writer2latex05.rh.patch
 BuildRequires: java-rpmbuild
-BuildRequires: openoffice.org-java-common
+BuildRequires: %{ooname}-java-common
 BuildRequires: ant
 Group:         Office
 %if ! %{gcj_support}
