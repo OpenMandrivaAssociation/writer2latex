@@ -1,6 +1,16 @@
 %define _with_gcj_support 0
 %define gcj_support %{?_with_gcj_support:1}%{!?_with_gcj_support:%{?_without_gcj_support:0}%{!?_without_gcj_support:%{?_gcj_support:%{_gcj_support}}%{!?_gcj_support:0}}}
 
+# Magic to figure ooodir:
+%define ooo_version %(rpm -q --qf '%%{version}' %{ooname}-java-common 2>/dev/null)
+%define ooo_shortver %(echo %ooo_version | perl -p -e 's/^([^\\\.]+\\\.[^\\\.]+)\\\..*/\\\1/')
+%define ooodir %{_libdir}/ooo-%{ooo_shortver}
+%define ooname openoffice.org
+%ifarch x86_64
+%define ooname openoffice.org64
+%define ooodir %{_libdir}/ooo-%{ooo_shortver}_64
+%endif
+
 Name:          writer2latex
 Version:       0.5
 Release:       %mkrel 1
@@ -9,7 +19,9 @@ License:       LGPLv2
 Url:           http://www.hj-gym.dk/~hj/writer2latex/
 Source0:       http://www.hj-gym.dk/~hj/writer2latex/writer2latex05.zip
 Patch0:        writer2latex05.rh.patch
-BuildRequires: ant, openoffice.org-core
+BuildRequires: java-rpmbuild
+BuildRequires: openoffice.org-java-common
+BuildRequires: ant
 Group:         Text Processing/Markup/XML
 %if ! %{gcj_support}
 Buildarch:     noarch
@@ -44,11 +56,11 @@ Javadoc for %{name}.
 %package -n openoffice.org-%{name}
 Summary:          OpenOffice.org Writer2LateX Extension
 Group:            Applications/Productivity
-Requires:         openoffice.org-core
-Requires(pre):    openoffice.org-core
-Requires(post):   openoffice.org-core
-Requires(preun):  openoffice.org-core
-Requires(postun): openoffice.org-core
+Requires:         openoffice.org-common
+Requires(pre):    openoffice.org-common
+Requires(post):   openoffice.org-common
+Requires(preun):  openoffice.org-common
+Requires(postun): openoffice.org-common
 
 
 %description -n openoffice.org-%{name}
@@ -61,7 +73,7 @@ XHTML, LaTeX and BibTeX export filters.
 sed -i -e "s#LIBDIR#%{_libdir}#" build.xml
 
 %build
-ant jar javadoc package
+%ant jar javadoc package -DOFFICE_HOME="%{ooodir}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
