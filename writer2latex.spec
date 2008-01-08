@@ -48,7 +48,7 @@ actually a collection of four converters, i.e.:
 
 %package javadoc
 Summary:     Javadoc for %{name}
-Group:       Development/Documentation
+Group:       Books/Computer books
 
 %description javadoc
 Javadoc for %{name}.
