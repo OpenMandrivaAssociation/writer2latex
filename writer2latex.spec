@@ -13,7 +13,7 @@
 
 Name:          writer2latex
 Version:       0.5
-Release:       %mkrel 1
+Release:       %mkrel 3
 Summary:       Writer2LateX Document Converter
 License:       LGPLv2
 Url:           http://www.hj-gym.dk/~hj/writer2latex/
