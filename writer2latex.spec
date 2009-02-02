@@ -1,4 +1,4 @@
-%define _with_gcj_support 0
+%define gcj_support 0
 
 # Magic to figure ooodir:
 %define ooo_version %(rpm -q --qf '%%{version}' %{ooname}-java-common 2>/dev/null)
