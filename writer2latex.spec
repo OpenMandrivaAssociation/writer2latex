@@ -1,24 +1,22 @@
 %define _with_gcj_support 0
-%define gcj_support %{?_with_gcj_support:1}%{!?_with_gcj_support:%{?_without_gcj_support:0}%{!?_without_gcj_support:%{?_gcj_support:%{_gcj_support}}%{!?_gcj_support:0}}}
 
 # Magic to figure ooodir:
 %define ooo_version %(rpm -q --qf '%%{version}' %{ooname}-java-common 2>/dev/null)
-%define ooo_shortver %(echo %ooo_version | perl -p -e 's/^([^\\\.]+\\\.[^\\\.]+)\\\..*/\\\1/')
-%define ooodir %{_libdir}/ooo-%{ooo_shortver}
+%define ooodir %{_libdir}/ooo-%{ooo_version}
 %define ooname openoffice.org
 %ifarch x86_64
 %define ooname openoffice.org64
-%define ooodir %{_libdir}/ooo-%{ooo_shortver}_64
+%define ooodir %{_libdir}/ooo-%{ooo_version}_64
 %endif
 
 Name:          writer2latex
-Version:       0.5
-Release:       %mkrel 4
+Version:       0.5.0.2
+Release:       %mkrel 1
 Summary:       Writer2LateX Document Converter
 License:       LGPLv2
 Url:           http://www.hj-gym.dk/~hj/writer2latex/
-Source0:       http://www.hj-gym.dk/~hj/writer2latex/writer2latex05.zip
-Patch0:        writer2latex05.rh.patch
+Source0:       http://www.hj-gym.dk/~hj/writer2latex/writer2latex0502.zip
+Patch0:        writer2latex05.mdv.patch
 BuildRequires: java-rpmbuild
 BuildRequires: %{ooname}-java-common
 BuildRequires: ant
@@ -35,7 +33,7 @@ BuildRequires: java-gcj-compat-devel
 
 %description
 Writer2LaTeX is a utility written in java. It converts OpenOffice.org documents
-– in particular documents containing formulas – into other formats. It is
+in particular documents containing formulas into other formats. It is
 actually a collection of four converters, i.e.:
 1) Writer2LaTeX converts documents into LaTeX 2e format for high quality
    typesetting.
@@ -62,21 +60,33 @@ Requires(post):   openoffice.org-common
 Requires(preun):  openoffice.org-common
 Requires(postun): openoffice.org-common
 
+%package -n openoffice.org-writer2xhtml
+Summary:          OpenOffice.org Writer to xhtml Converter
+Group:            Office
+Requires:         openoffice.org-common
+Requires(pre):    openoffice.org-common
+Requires(post):   openoffice.org-common
+Requires(preun):  openoffice.org-common
+Requires(postun): openoffice.org-common
 
 %description -n openoffice.org-%{name}
 Document Converter Extension for OpenOffice.org to provide
 XHTML, LaTeX and BibTeX export filters.
 
+%description -n openoffice.org-writer2xhtml
+Document Converter Extension for OpenOffice.org to provide
+XHTML export filters.
+
 %prep
 %setup -q -n writer2latex05
-%patch0 -p1 -b .rh.patch
+%patch0 -p0 -b .mdv.patch
 sed -i -e "s#LIBDIR#%{_libdir}#" build.xml
 
 %build
-%ant jar javadoc package -DOFFICE_HOME="%{ooodir}"
+%ant jar javadoc oxt -DOFFICE_HOME="%{ooodir}"
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 # jar
 install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
 install -m 644 target/lib/%{name}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
@@ -87,16 +97,18 @@ cp -r target/javadoc/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
 pushd $RPM_BUILD_ROOT%{_javadocdir}
 ln -s %{name}-%{version} %{name}
 popd
-# OOo extension
-install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/writer2latex.uno.pkg
-unzip target/lib/writer2latex.uno.pkg -d $RPM_BUILD_ROOT%{_datadir}/writer2latex.uno.pkg
+# OOo extensions
+install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/openoffice.org/extensions/writer2latex.oxt
+unzip target/lib/writer2latex.oxt -d $RPM_BUILD_ROOT%{_datadir}/openoffice.org/extensions/writer2latex.oxt
+install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/openoffice.org/extensions/writer2xhtml.oxt
+unzip target/lib/writer2xhtml.oxt -d $RPM_BUILD_ROOT%{_datadir}/openoffice.org/extensions/writer2xhtml.oxt
 
 %if %{gcj_support}
 %{_bindir}/aot-compile-rpm
 %endif
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %post
 %if %{gcj_support}
@@ -116,23 +128,42 @@ fi
 
 %pre -n openoffice.org-%{name}
 if [ $1 -gt 1 ]; then
-    # Upgrade => deregister old extension
-    unopkg remove --shared org.openoffice.legacy.writer2latex.uno.pkg -env:JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY=1 > /dev/null 2>&1 || :
+    # Upgrade
+    # => deregister extension with old name if it exists
+    unopkg remove --shared org.openoffice.legacy.writer2latex.uno.pkg > /dev/null 2>&1 || :
+    # => deregister extension with new name if it exists
+    unopkg remove --shared org.openoffice.da.writer2latex.oxt > /dev/null 2>&1 || :
 fi
 
 %post -n openoffice.org-%{name}
     # register extension
-    unopkg add --shared --link %{_datadir}/writer2latex.uno.pkg -env:JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY=1 || :
+    unopkg add --shared --force --link %{_datadir}/openoffice.org/extensions/writer2latex.oxt || :
 
 %preun -n openoffice.org-%{name}
 if [ $1 -eq 0 ]; then
     # not upgrading => deregister
-    unopkg remove --shared org.openoffice.legacy.writer2latex.uno.pkg -env:JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY=1 || :
+    unopkg remove --shared org.openoffice.da.writer2latex.oxt || :
 fi
 
 %postun -n openoffice.org-%{name}
     # clear disk cache
-    unopkg list --shared -env:JFW_PLUGIN_DO_NOT_CHECK_ACCESSIBILITY=1 > /dev/null 2>&1 || :
+    unopkg list --shared > /dev/null 2>&1 || :
+
+%pre -n openoffice.org-writer2xhtml
+if [ $1 -gt 1 ]; then
+    # Upgrade => deregister old extension
+    unopkg remove --shared org.openoffice.da.writer2xhtml.oxt || :
+fi
+
+%post -n openoffice.org-writer2xhtml
+    # register extension
+    unopkg add --shared --force --link %{_datadir}/openoffice.org/extensions/writer2xhtml.oxt || :
+
+%preun -n openoffice.org-writer2xhtml
+if [ $1 -eq 0 ]; then
+    # not upgrading => deregister
+    unopkg remove --shared org.openoffice.da.writer2xhtml.oxt || :
+fi
 
 %files
 %defattr(0644,root,root,0755)
@@ -149,4 +180,9 @@ fi
 
 %files -n openoffice.org-%{name}
 %defattr(0644,root,root,0755)
-%{_datadir}/writer2latex.uno.pkg
+%{_datadir}/openoffice.org/extensions/writer2latex.oxt
+
+%files -n openoffice.org-writer2xhtml
+%defattr(0644,root,root,0755)
+%{_datadir}/openoffice.org/extensions/writer2xhtml.oxt
+
