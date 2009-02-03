@@ -19,6 +19,7 @@ Source0:       http://www.hj-gym.dk/~hj/writer2latex/writer2latex0502.zip
 Patch0:        writer2latex05.mdv.patch
 BuildRequires: %{ooname}-java-common
 BuildRequires: ant
+BuildRequires: java-rpmbuild
 Group:         Office
 Buildroot:     %{_tmppath}/%{name}-%{version}-%{release}-builroot
 Requires:      xalan-j2, xerces-j2
