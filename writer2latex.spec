@@ -17,13 +17,9 @@ License:       LGPLv2
 Url:           http://www.hj-gym.dk/~hj/writer2latex/
 Source0:       http://www.hj-gym.dk/~hj/writer2latex/writer2latex0502.zip
 Patch0:        writer2latex05.mdv.patch
-BuildRequires: java-rpmbuild
 BuildRequires: %{ooname}-java-common
 BuildRequires: ant
 Group:         Office
-%if ! %{gcj_support}
-Buildarch:     noarch
-%endif
 Buildroot:     %{_tmppath}/%{name}-%{version}-%{release}-builroot
 Requires:      xalan-j2, xerces-j2
 
