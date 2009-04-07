@@ -11,7 +11,7 @@
 
 Name:          writer2latex
 Version:       0.5.0.2
-Release:       %mkrel 1
+Release:       %mkrel 2
 Summary:       Writer2LateX Document Converter
 License:       LGPLv2
 Url:           http://www.hj-gym.dk/~hj/writer2latex/
@@ -51,20 +51,20 @@ Javadoc for %{name}.
 %package -n openoffice.org-%{name}
 Summary:          OpenOffice.org Writer2LateX Extension
 Group:            Office
-Requires:         openoffice.org-common
-Requires(pre):    openoffice.org-common
-Requires(post):   openoffice.org-common
-Requires(preun):  openoffice.org-common
-Requires(postun): openoffice.org-common
+Requires:         %{ooname}-common
+Requires(pre):    %{ooname}-common
+Requires(post):   %{ooname}-common
+Requires(preun):  %{ooname}-common
+Requires(postun): %{ooname}-common
 
 %package -n openoffice.org-writer2xhtml
 Summary:          OpenOffice.org Writer to xhtml Converter
 Group:            Office
-Requires:         openoffice.org-common
-Requires(pre):    openoffice.org-common
-Requires(post):   openoffice.org-common
-Requires(preun):  openoffice.org-common
-Requires(postun): openoffice.org-common
+Requires:         %{ooname}-common
+Requires(pre):    %{ooname}-common
+Requires(post):   %{ooname}-common
+Requires(preun):  %{ooname}-common
+Requires(postun): %{ooname}-common
 
 %description -n openoffice.org-%{name}
 Document Converter Extension for OpenOffice.org to provide
