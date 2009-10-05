@@ -2,16 +2,12 @@
 
 # Magic to figure ooodir:
 %define ooo_version %(rpm -q --qf '%%{version}' %{ooname}-java-common 2>/dev/null)
-%define ooodir %{_libdir}/ooo-%{ooo_version}
+%define ooodir %{_libdir}/ooo
 %define ooname openoffice.org
-%ifarch x86_64
-%define ooname openoffice.org64
-%define ooodir %{_libdir}/ooo-%{ooo_version}_64
-%endif
 
 Name:          writer2latex
 Version:       0.5.0.2
-Release:       %mkrel 3
+Release:       %mkrel 4
 Summary:       Writer2LateX Document Converter
 License:       LGPLv2
 Url:           http://www.hj-gym.dk/~hj/writer2latex/
