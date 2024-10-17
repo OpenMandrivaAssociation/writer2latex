@@ -10,7 +10,7 @@ Version:       0.5.0.2
 Release:       %mkrel 5
 Summary:       Writer2LateX Document Converter
 License:       LGPLv2
-Url:           http://www.hj-gym.dk/~hj/writer2latex/
+Url:           https://www.hj-gym.dk/~hj/writer2latex/
 Source0:       http://www.hj-gym.dk/~hj/writer2latex/writer2latex0502.zip
 Patch0:        writer2latex05.mdv.patch
 BuildRequires: %{ooname}-java-common
