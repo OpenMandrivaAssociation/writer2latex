@@ -7,7 +7,7 @@
 
 Name:          writer2latex
 Version:       0.5.0.2
-Release:       %mkrel 5
+Release:       6
 Summary:       Writer2LateX Document Converter
 License:       LGPLv2
 Url:           https://www.hj-gym.dk/~hj/writer2latex/
